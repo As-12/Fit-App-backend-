@@ -1,0 +1,1 @@
+web: gunicorn fit-app:app

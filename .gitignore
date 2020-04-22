@@ -4,3 +4,4 @@ __pycache__
 
 conf/api.local.conf
 test.sh
+.coverage
