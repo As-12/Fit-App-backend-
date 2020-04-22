@@ -27,6 +27,7 @@ logger = logging.getLogger('fit_application')
 
 # Configuration Files
 if os.environ['ENV'] == 'prod':
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
     app.config.from_pyfile(os.path.join('.', 'conf/api.conf'), silent=True)
     logging.getLogger('flask_cors').level = logging.INFO
     logger.level = logging.INFO
