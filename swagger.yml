@@ -1,0 +1,328 @@
+swagger: '2.0'
+basePath: /api/v1
+paths:
+  /progress/:
+    get:
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/all_progress_model'
+      summary: Get a list of every user's progress
+      description: 'Requires read:progress permission'
+      operationId: get_progress_list
+      parameters:
+        - name: X-Fields
+          in: header
+          type: string
+          format: mask
+          description: An optional fields mask
+      tags:
+        - progress
+  '/progress/test/{user_id}':
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        type: string
+    get:
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/progress_list_model'
+      summary: TEST Endpoint
+      description: Generate  artificial user's progress and return all progress
+      operationId: get_progresses_test
+      parameters:
+        - name: X-Fields
+          in: header
+          type: string
+          format: mask
+          description: An optional fields mask
+      tags:
+        - progress
+  '/progress/{user_id}':
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        type: string
+    get:
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/progress_list_model'
+      summary: Get a list of user's progress
+      description: Only authenticated user can access their own resource
+      operationId: get_progresses
+      parameters:
+        - name: X-Fields
+          in: header
+          type: string
+          format: mask
+          description: An optional fields mask
+      tags:
+        - progress
+    post:
+      responses:
+        '201':
+          description: Success
+          schema:
+            $ref: '#/definitions/progress_model'
+      summary: Post a progress
+      operationId: post_progresses
+      parameters:
+        - name: payload
+          required: true
+          in: body
+          schema:
+            $ref: '#/definitions/progress_model'
+        - name: X-Fields
+          in: header
+          type: string
+          format: mask
+          description: An optional fields mask
+      tags:
+        - progress
+    patch:
+      responses:
+        '204':
+          description: Modify progress successful
+      summary: Patch a progress
+      operationId: patch_progresses
+      parameters:
+        - name: payload
+          required: true
+          in: body
+          schema:
+            $ref: '#/definitions/progress_model'
+      tags:
+        - progress
+  /users/:
+    get:
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/user_list_model'
+      summary: Get a list of all users
+      description: 'This endpoint requires read:user permission'
+      operationId: get_user_list
+      parameters:
+        - name: X-Fields
+          in: header
+          type: string
+          format: mask
+          description: An optional fields mask
+      tags:
+        - users
+    post:
+      responses:
+        '201':
+          description: Success
+          schema:
+            $ref: '#/definitions/user_model'
+      summary: Create a new user
+      description: |-
+        Only authenticating user can post
+        User ID is defined by the verified subject in the access token
+      operationId: post_user_list
+      parameters:
+        - name: payload
+          required: true
+          in: body
+          schema:
+            $ref: '#/definitions/user_model'
+        - name: X-Fields
+          in: header
+          type: string
+          format: mask
+          description: An optional fields mask
+      tags:
+        - users
+  '/users/{user_id}':
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        type: string
+    get:
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/user_model'
+      summary: Obtain user information
+      description: Only authenticated user can access their own resource
+      operationId: get_users
+      parameters:
+        - name: X-Fields
+          in: header
+          type: string
+          format: mask
+          description: An optional fields mask
+      tags:
+        - users
+    delete:
+      responses:
+        '204':
+          description: User deleted successfully
+      summary: Delete existing user
+      description: |-
+        Require delete:user permission
+        This will also delete associated progress for this user
+      operationId: delete_users
+      tags:
+        - users
+    patch:
+      responses:
+        '204':
+          description: User modified successfully
+      summary: Update user
+      description: Authenticated user can only access their own resource
+      operationId: patch_users
+      parameters:
+        - name: payload
+          required: true
+          in: body
+          schema:
+            $ref: '#/definitions/user_patch_model'
+      tags:
+        - users
+info:
+  title: Fit-App API
+  version: "1.0"
+  description: Backend API for Fit-App SPA
+produces:
+  - application/json
+consumes:
+  - application/json
+securityDefinitions:
+  Bearer Auth:
+    type: apiKey
+    in: header
+    name: Authorization
+    description: 'Type in the *''Value''* input box below: **''Bearer &lt;JWT&gt;''**, where JWT is the token'
+security:
+  - Bearer Auth: []
+tags:
+  - name: users
+    description: User operations
+  - name: progress
+    description: Progress operations
+definitions:
+  user_model:
+    properties:
+      id:
+        type: string
+        description: IdP provided user-id
+        readOnly: true
+      target_weight:
+        type: number
+        description: User target weight
+      height:
+        type: number
+        description: height in cm
+      city:
+        type: string
+        description: City
+      state:
+        type: string
+        description: State or Country (Non-US)
+    type: object
+  user_list_model:
+    properties:
+      users:
+        type: array
+        default: []
+        items:
+          $ref: '#/definitions/user_model'
+      count:
+        type: integer
+        description: Total number of users
+        readOnly: true
+    type: object
+  user_patch_model:
+    properties:
+      target_weight:
+        type: number
+        description: User target weight in kg
+      height:
+        type: number
+        description: height in cm
+      city:
+        type: string
+        description: City
+      state:
+        type: string
+        description: State or Country (Non-US)
+    type: object
+  all_progress_model:
+    properties:
+      progresses:
+        type: array
+        default: []
+        items:
+          $ref: '#/definitions/progress_model'
+      count:
+        type: integer
+        description: Progress counts
+        readOnly: true
+    type: object
+  progress_model:
+    required:
+      - diet
+      - mood
+      - track_date
+      - weight
+    properties:
+      user_id:
+        type: string
+        description: IdP provided user-id
+        readOnly: true
+      track_date:
+        type: string
+        format: date
+        description: Date of tracking
+      weight:
+        type: number
+        description: Current weight
+      mood:
+        type: string
+        description: 'Mood value. Can be one of the following (neutral, bad, good)'
+        default: neutral
+      diet:
+        type: string
+        description: 'Diet value. Can be one of the following (neutral, bad, good)'
+        default: neutral
+    type: object
+  progress_list_model:
+    properties:
+      user_id:
+        type: string
+        description: IdP provided user-id
+      progresses:
+        type: array
+        default: []
+        items:
+          $ref: '#/definitions/progress_model'
+      count:
+        type: integer
+        description: Progress counts
+        readOnly: true
+    type: object
+responses:
+  ParseError:
+    description: When a mask can't be parsed
+  MaskError:
+    description: When any error occurs on mask

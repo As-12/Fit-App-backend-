@@ -8,7 +8,7 @@
 
 This is a simple implementation of a Fitness tracking application, a tool that helps visualize and track your weight loss progress. 
 
-## API Documentation can be accessed here
+## Swagger UI  can be accessed here
 [https://fit-app-tc.herokuapp.com](https://fit-app-tc.herokuapp.com/)
 
 ![FitApp](banner.gif)
@@ -119,6 +119,38 @@ coverage report
 ```bash
 ./run-test.sh
 ```
+
+
+## API Behavior and Documentation
+
+### Security Roles
+ - Authenticated user
+    Authenticated user are default roles for user who signed up for service.
+    They can access the following end points:
+    - GET users/{user_id}
+    - POST users    
+    - PATCH users/{user_id}
+    - GET progress/{user_id}
+    - POST progress/{user_id}
+    
+ - Auditor
+    Auditors have an additional privileged from Authenticated user to access the following end point.
+    - GET users
+    - GET progress
+    
+ - Administrator
+    Have access to every end points.
+    
+### Accessing the API Doc
+
+Online API documentation:. 
+[https://fit-app-tc.herokuapp.com](https://fit-app-tc.herokuapp.com/)
+
+Offline Doc:
+[swagger.md](swagger.md)
+
+
+
 
 ## License
 
