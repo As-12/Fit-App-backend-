@@ -19,7 +19,8 @@ class UserList(Resource):
     @user_ns.marshal_list_with(user_list_model)
     @requires_auth('read:user')
     def get(self, payload):
-        """Get a list of all users. This endpoint requires read:user permission"""
+        """Get a list of all users.
+        This endpoint requires read:user permission"""
 
         logger.info(f"GET request to user list from {request.remote_addr}")
         users = User.query.all()
@@ -36,7 +37,9 @@ class UserList(Resource):
         """Create a new user. Only authenticating user can post
            User ID is defined by the verified subject in the access token
         """
-        logger.info(f"POST request to create user {payload['sub']} from {request.remote_addr}")
+        logger.info(f"POST request to create user "
+                    f"{payload['sub']} from {request.remote_addr}")
+        message = ""
         try:
             user = User(**api.payload)
             user.id = payload['sub']
@@ -48,7 +51,8 @@ class UserList(Resource):
             message = str(e)
         except IntegrityError:
             code = 422
-            message = "Cannot add to existing user. Use Patch request instead"
+            message = "Cannot add to existing user. " \
+                      "Use Patch request instead"
         except Exception as e:
             logger.debug(e)
             code = 400
@@ -66,8 +70,10 @@ class Users(Resource):
     @user_ns.marshal_with(user_model)
     @requires_auth_with_same_user()
     def get(self, payload, user_id):
-        """Obtain user information. Only authenticated user can access their own resource"""
-        logger.info(f"GET request to user {user_id} from {request.remote_addr}")
+        """Obtain user information.
+        Only authenticated user can access their own resource"""
+        logger.info(f"GET request to user "
+                    f"{user_id} from {request.remote_addr}")
         user = User.query.get(user_id)
         if user is None:
             logger.debug(f"GET error {user_id} does not exist ")
@@ -81,7 +87,9 @@ class Users(Resource):
            This will also delete associated progress for this user
         """
 
-        logger.info(f"DELETE request to user {user_id} from {request.remote_addr}")
+        logger.info(f"DELETE request to user "
+                    f"{user_id} from {request.remote_addr}")
+        message = ""
         try:
             user = User.query.get(user_id)
             if user is None:
@@ -89,9 +97,11 @@ class Users(Resource):
                 code = 404
                 message = f"User {user_id} does not exist."
             else:
-                associated_progress = Progress.query.filter(Progress.user_id == user_id).all()
+                associated_progress = Progress.query\
+                    .filter(Progress.user_id == user_id).all()
                 if associated_progress is not None:
-                    logger.debug(f"DELETE: deleting all progress related to {user_id}")
+                    logger.debug(f"DELETE: deleting all progress"
+                                 f" related to {user_id}")
                     for progress in associated_progress:
                         progress.delete()
                 user.delete()
@@ -110,9 +120,12 @@ class Users(Resource):
     @user_ns.response(204, 'User modified successfully')
     @requires_auth_with_same_user()
     def patch(self, payload, user_id):
-        """ Update user. Authenticated user can only access their own resource """
+        """ Update user.
+        Authenticated user can only access their own resource """
 
-        logger.info(f"PATCH request to modify user {user_id} from {request.remote_addr}")
+        logger.info(f"PATCH request to modify user {user_id} "
+                    f"from {request.remote_addr}")
+        message = ""
         try:
             user = User.query.get(user_id)
             if user is None:
@@ -136,6 +149,7 @@ class Users(Resource):
         if code != 204:
             abort(code, message)
 
-        logger.debug(f"Modifying {user_id} is successful requested from {request.remote_addr}")
+        logger.debug(f"Modifying {user_id} is successful requested "
+                     f"from {request.remote_addr}")
 
         return '', 204

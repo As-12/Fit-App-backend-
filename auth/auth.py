@@ -58,7 +58,7 @@ def verify_decode_jwt(token):
     """Determines if the Access Token is valid
     """
 
-    # @TODO: Cache JWKs and refetch when decode error. This should really speed up integration test
+    # @TODO: Cache JWKs and refetch when decode error.
     jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
     jwks = json.loads(jsonurl.read())
     unverified_header = jwt.get_unverified_header(token)
@@ -99,7 +99,8 @@ def verify_decode_jwt(token):
         except jwt.JWTClaimsError:
             raise AuthError({
                 'code': 'invalid_claims',
-                'description': 'Incorrect claims. Please, check the audience and issuer.'
+                'description':
+                    'Incorrect claims. Please, check the audience and issuer.'
             }, 401)
         except Exception:
             raise AuthError({
@@ -119,13 +120,16 @@ def check_permissions(permission, payload, user_id):
         if permission != '' and permission not in payload['permissions']:
             raise AuthError({
                 'code': 'Forbidden',
-                'description': 'Insufficient permission to perform the request.'
+                'description':
+                    'Insufficient permission to perform the request.'
             }, 403)
         # Validate if user is accesssing their own resource
         if user_id != '' and payload['sub'] != user_id:
             raise AuthError({
                 'code': 'Forbidden',
-                'description': 'You do not have permission to perform this task on another user resource.'
+                'description':
+                    'You do not have permission to perform'
+                    ' this task on another user resource.'
             }, 403)
 
     except AuthError:
@@ -133,7 +137,8 @@ def check_permissions(permission, payload, user_id):
     except Exception as e:
         raise AuthError({
             'code': 'invalid_key',
-            'description': 'authorization token does not contain permission. Ensure that RBAC is enabled and the user '
+            'description': 'authorization token does not contain permission.'
+                           ' Ensure that RBAC is enabled and the user '
                            'has an appropriate role assigned '
         }, 401)
 

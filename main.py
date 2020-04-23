@@ -27,21 +27,26 @@ logger = logging.getLogger('fit_application')
 
 # Configuration Files
 if os.environ['ENV'] == 'prod':
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
-    app.config.from_pyfile(os.path.join('.', 'conf/api.conf'), silent=True)
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ[
+        'SQLALCHEMY_DATABASE_URI']
+    app.config.from_pyfile(os.path.join('.', 'conf/api.conf'),
+                           silent=True)
     logging.getLogger('flask_cors').level = logging.INFO
     logger.level = logging.INFO
 elif os.environ['ENV'] == 'dev':
-    app.config.from_pyfile(os.path.join('.', 'conf/api.dev.conf'), silent=True)
+    app.config.from_pyfile(os.path.join('.', 'conf/api.dev.conf'),
+                           silent=True)
     logging.getLogger('flask_cors').level = logging.DEBUG
     logger.level = logging.DEBUG
 elif os.environ['ENV'] == 'test':
     # This is for running test
-    app.config.from_pyfile(os.path.join('.', 'conf/api.test.conf'), silent=True)
+    app.config.from_pyfile(os.path.join('.', 'conf/api.test.conf'),
+                           silent=True)
     logging.getLogger('flask_cors').level = logging.DEBUG
     logger.level = logging.DEBUG
 else:
-    app.config.from_pyfile(os.path.join('.', 'conf/api.local.conf'), silent=True)
+    app.config.from_pyfile(os.path.join('.', 'conf/api.local.conf'),
+                           silent=True)
     logging.getLogger('flask_cors').level = logging.DEBUG
     logger.level = logging.DEBUG
 
@@ -62,12 +67,17 @@ authorizations = {
         'type': 'apiKey',
         'in': 'header',
         'name': 'Authorization',
-        'description': "Type in the *'Value'* input box below: **'Bearer &lt;JWT&gt;'**, where JWT is the token"
+        'description':
+            "Type in the *'Value'* input box below:"\
+            " **'Bearer &lt;JWT&gt;'**, where JWT is the token"
     },
 }
 
-api = Api(app, version=VERSION, title="Fit-App API", description="Backend API for Fit-App SPA", security='Bearer Auth',
-          authorizations=authorizations, prefix=API_PREFIX)
+api = Api(app, version=VERSION, title="Fit-App API",
+          description="Backend API for Fit-App SPA",
+          security='Bearer Auth',
+          authorizations=authorizations,
+          prefix=API_PREFIX)
 
 # CORS Configuration
 CORS(app)
@@ -75,8 +85,10 @@ CORS(app)
 
 @app.after_request
 def after_request(response):
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PATCH,POST,DELETE,OPTIONS')
+    response.headers.add('Access-Control-Allow-Headers',
+                         'Content-Type,Authorization,true')
+    response.headers.add('Access-Control-Allow-Methods',
+                         'GET,PATCH,POST,DELETE,OPTIONS')
     return response
 
 
@@ -85,16 +97,26 @@ def after_request(response):
 @cross_origin()
 def health_check():
     logger.info(f"Health check triggered from {request.remote_addr}")
-    return jsonify( {
+    return jsonify({
         "message": "The App is running",
         "success": True
     }), 200
+
 
 # import all controllers
 from controllers import *
 
 
 # Handling common error
+
+@app.errorhandler(500)
+def unprocessable(error="The server is unable to process your request"):
+    return jsonify({
+        "success": False,
+        "error": 500,
+        "message": str(error)
+    }), 500
+
 
 @app.errorhandler(422)
 def unprocessable(error="request cannot be processed"):

@@ -6,7 +6,8 @@ import database
 @dataclass
 class User(db.Model):
     __tablename__ = 'user'
-    id: str = db.Column(db.String, primary_key=True, autoincrement=False)
+    id: str = db.Column(db.String, primary_key=True,
+                        autoincrement=False)
     target_weight: float = db.Column(db.Float, nullable=False)
     height: float = db.Column(db.Float, nullable=False)
     city: str = db.Column(db.String)
@@ -21,7 +22,9 @@ class User(db.Model):
             the model must have a unique name
             the model must have a unique id or null id
             EXAMPLE
-                user = User(id=user_id,  target_weight=120.3, dob=Date())
+                user = User(id=user_id,
+                target_weight=120.3,
+                dob=Date())
                 user.insert()
         """
         try:
@@ -29,9 +32,8 @@ class User(db.Model):
             db.session.add(self)
             db.session.commit()
         except Exception as e:
-            print(e)
             db.session.rollback()
-            raise
+            raise e
         finally:
             db.session.close()
 
@@ -41,7 +43,9 @@ class User(db.Model):
             deletes a new model into a database
             the model must exist in the database
             EXAMPLE
-                user = User(id=user_id, target_weight=120.3, dob=Date())
+                user = User(id=user_id,
+                target_weight=120.3,
+                dob=Date())
                 user.delete()
         """
         db.session.delete(self)
@@ -54,7 +58,10 @@ class User(db.Model):
             updates a new model into a database
             the model must exist in the database
             EXAMPLE
-                user = User(id=user_id, target_weight=120.3, dob=Date())
+                user = User(id=user_id,
+                target_weight=120.3,
+                dob=Date())
+
                 user.target_weight = 200.5
                 user.update()
         """
@@ -65,9 +72,9 @@ class User(db.Model):
                         setattr(self, key, update_dict[key])
             self.validate()
             db.session.commit()
-        except:
+        except Exception as e:
             db.session.rollback()
-            raise
+            raise e
         finally:
             db.session.close()
 
@@ -76,10 +83,13 @@ class User(db.Model):
         validate()
             Validate the model for invalid value.
             Raise a ValueError for invalid value
-            This function is automatically called upon insert or update
+            This function is automatically
+            called upon insert or update
         """
         if self.target_weight < 0:
-            raise ValueError("target_weight must be greater or equal to zero")
+            raise ValueError("target_weight must be greater "
+                             "or equal to zero")
 
         if self.height < 0:
-            raise ValueError("height must be greater or equal to zero")
+            raise ValueError("height must be greater "
+                             "or equal to zero")

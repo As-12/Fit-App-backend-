@@ -8,18 +8,26 @@ from dataclasses import dataclass
 from datetime import datetime
 import database
 
-# List of valid emotional value. Enum is preferred but not supported by Marshmallow
+# List of valid emotional value.
+# Enum is preferred but not supported by Marshmallow
 valid_emotion_value = ["bad", "neutral", "good"]
 
 
 @dataclass
 class Progress(db.Model):
     __tablename__ = 'progress'
-    user_id: str = db.Column(db.String, db.ForeignKey('user.id'), primary_key=True, autoincrement=False)
-    track_date: datetime = db.Column(db.DateTime, primary_key=True, nullable=False)
+    user_id: str = db.Column(db.String,
+                             db.ForeignKey('user.id'),
+                             primary_key=True,
+                             autoincrement=False)
+    track_date: datetime = db.Column(db.DateTime,
+                                     primary_key=True,
+                                     nullable=False)
     weight: float = db.Column(db.Float, nullable=False)
-    mood: str = db.Column(db.String, default="neutral", nullable=False)
-    diet: str = db.Column(db.String, default="neutral", nullable=False)
+    mood: str = db.Column(db.String, default="neutral",
+                          nullable=False)
+    diet: str = db.Column(db.String, default="neutral",
+                          nullable=False)
 
     def insert(self):
         """
@@ -41,7 +49,7 @@ class Progress(db.Model):
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            raise
+            raise e
         finally:
             db.session.close()
 
@@ -75,9 +83,9 @@ class Progress(db.Model):
                 self.mood = update_dict["mood"].lower()
                 self.diet = update_dict["diet"].lower()
             db.session.commit()
-        except:
+        except Exception as e:
             db.session.rollback()
-            raise
+            raise e
         finally:
             db.session.close()
 
