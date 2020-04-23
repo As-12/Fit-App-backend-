@@ -8,6 +8,10 @@
 
 This is a simple implementation of a Fitness tracking application, a tool that helps visualize and track your weight loss progress. 
 
+## Live Demo
+
+[https://fitapp.as12production.com/](https://fitapp.as12production.com/)
+
 ## Swagger UI  can be accessed here
 [https://fit-app-tc.herokuapp.com](https://fit-app-tc.herokuapp.com/)
 
