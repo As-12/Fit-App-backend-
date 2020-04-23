@@ -21,7 +21,7 @@ from auth.auth import requires_auth, AuthError, requires_auth_with_same_user
 
 app = Flask(__name__)
 
-VERSION = 1.0
+VERSION = "1.0"
 API_PREFIX = "/api/v1"
 logger = logging.getLogger('fit_application')
 
