@@ -128,22 +128,21 @@ coverage report
 ## API Behavior and Documentation
 
 ### Security Roles
- - Authenticated user
-    Authenticated user are default roles for user who signed up for service.
-    They can access the following end points:
-    - GET users/{user_id}
-    - POST users    
-    - PATCH users/{user_id}
-    - GET progress/{user_id}
-    - POST progress/{user_id}
+ #### Authenticated user
+   Default roles for user who signed up for service.:
+   - GET users/{user_id}
+   - POST users    
+   - PATCH users/{user_id}
+   - GET progress/{user_id}
+   - POST progress/{user_id}
     
- - Auditor
-    Auditors have an additional privileged from Authenticated user to access the following end point.
-    - GET users
-    - GET progress
+ #### Auditor
+   Auditors have an additional privileged from Authenticated user to access the following end point.
+   - GET users
+   - GET progress
     
- - Administrator
-    Have access to every end points.
+ #### Administrator
+   Have access to every end points.
     
 ### Accessing the API Doc
 
